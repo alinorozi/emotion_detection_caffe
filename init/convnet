@@ -1,0 +1,58 @@
+#! /bin/sh
+
+. /etc/rc.d/init.d/functions
+
+user=zedgeuser
+retval=0
+prog="/var/zedge_convnet2/convnet_server"
+lockfile=/var/lock/subsys/convnet
+pidfile="/var/run/convnet.pid"
+
+start () {
+    echo -n $"Starting convnet: "
+    daemon --user $user $prog $OPTIONS
+    retval=$?
+    PID=$!
+    echo
+    [ $retval -eq 0 ] && touch $lockfile
+    echo $PID > $pidfile
+}
+
+stop () {
+    echo -n $"Stopping convnet: "
+    #p=$(basename $prog)
+    local pids=$(pgrep -f zedge_classifier)
+    if [ -z "$pids" ]; then
+       echo "$prog not running"
+       return 0
+    fi
+    kill -9 $pids
+    ##killproc $prog
+    retval=$?
+    echo
+    [ $retval -eq 0 ] && rm -f $lockfile
+    rm -f $pidfile
+}
+
+restart () {
+  stop
+  start
+}
+
+case "$1" in
+  start)
+    start
+    ;;
+  stop)
+    stop
+    ;;
+  restart)
+    restart
+    ;;
+  *)
+    echo $"Usage: $0 {start|stop|restart}"
+    exit 1
+esac
+
+exit $?
+

@@ -1,0 +1,21 @@
+tornado_port:           30736
+cpu_mode:               0
+num_workers:            1
+use_py:                 1
+
+wallpapers_field:       wallpapers
+temp_folder:            temp
+
+bad_terms_file:         dictionaries/bad_terms.json
+bad_categories_file:    dictionaries/bad_categories.json
+text_explicit_field:    family_unfriendly
+
+classifier_sharable:
+    - classifier_name:  sharable
+      deploy_file_py:   ./zedge_training/deploy_py.prototxt
+      deploy_file_cpp:  ./zedge_training/deploy_cpp_sharable.prototxt
+      trained_model:    ./zedge_training/sharable/training/anger/caffe_alexnet_train_iter_3000.caffemodel
+      mean_file:        ./zedge_training/sharable/training/anger/mean.npy
+      decision_field:   sharable
+      output_field:     sharable_output
+
